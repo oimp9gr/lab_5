@@ -3,32 +3,98 @@
 #include "catch.hpp"
 #include "util.h"
 
-#define string ForbiddenString
-#define char ForbiddenString
+#include <string>
+#include <ostream>
+
+#ifdef _GLIBCXX_VECTOR
+#undef _GLIBCXX_VECTOR
+#endif
+
+#ifdef _GLIBCXX_DEQUE
+#undef _GLIBCXX_DEQUE
+#endif
+
+#ifdef _GLIBCXX_QUEUE
+#undef _GLIBCXX_QUEUE
+#endif
+
+#ifdef _GLIBCXX_ARRAY
+#undef _GLIBCXX_ARRAY
+#endif
 
 #include "../solutions/a1.h"
 
 using namespace std;
 
+TEST_CASE("a1: Test forbidden includes", "[task:a1]") {
+    SECTION("Don't include std::vector") {
+#ifdef _GLIBCXX_VECTOR
+        REQUIRE(false);
+#endif
+    }
+
+    SECTION("Don't include std::deque") {
+#ifdef _GLIBCXX_DEQUE
+        REQUIRE(false);
+#endif
+    }
+
+    SECTION("Don't include std::queue") {
+#ifdef _GLIBCXX_QUEUE
+        REQUIRE(false);
+#endif
+    }
+
+    SECTION("Don't include std::array") {
+#ifdef _GLIBCXX_ARRAY
+        REQUIRE(false);
+#endif
+    }
+}
+
 TEST_CASE("a1: Example", "[task:a1]") {
-    vector<int> v{1, -2, -3, 4};
-    REQUIRE(PrintVector(v).str() == "{1, -2, -3, 4}");
+    Matrix empty;
+    REQUIRE(empty.GetWidth() == 0);
+    REQUIRE(empty.GetHeight() == 0);
+
+    Matrix zeroes(2, 2);
+    REQUIRE(zeroes.GetWidth() == 2);
+    REQUIRE(zeroes.GetHeight() == 2);
+
+    stringstream ss;
+    ss << zeroes;
+    string actual = util::trim(ss.str());
+    REQUIRE(actual == "0 0\n0 0");
 }
 
-TEST_CASE("a1: Big numbers", "[task:a1]") {
-    vector<int> v{123123, 948679, 2000000000, -2000000000};
-    REQUIRE(PrintVector(v).str() == "{123123, 948679, 2000000000, -2000000000}");
+TEST_CASE("a1: Test const", "[task:a1]") {
+    const Matrix empty;
+    REQUIRE(empty.GetWidth() == 0);
+    REQUIRE(empty.GetHeight() == 0);
 }
 
-TEST_CASE("a1: Randomly generated ", "[task:a1]") {
-    vector<int> v
-        {89383, 30886, 92777, 36915, 47793, 38335, 85386, 60492, 16649, 41421, 2362, 90027, 68690, 20059, 97763, 13926,
-            80540, 83426, 89172, 55736, 5211, 95368, 2567, 56429, 65782, 21530, 22862, 65123, 74067, 3135, 13929, 79802,
-            34022, 23058, 33069, 98167, 61393, 18456, 75011, 78042, 76229, 77373, 84421, 44919, 13784, 98537, 75198,
-            94324, 98315, 64370, 66413, 3526, 76091, 68980, 59956, 41873, 6862, 99170, 6996, 97281, 2305, 20925, 77084,
-            36327, 60336, 26505, 50846, 21729, 61313, 25857, 16124, 53895, 19582, 545, 98814, 33367, 15434, 90364,
-            44043, 13750, 71087, 26808, 17276, 47178, 95788, 93584, 5403, 2651, 92754, 12399, 99932, 95060, 49676,
-            93368, 47739, 10012, 36226, 98586, 48094, 97539};
-    REQUIRE(PrintVector(v).str()
-                == "{89383, 30886, 92777, 36915, 47793, 38335, 85386, 60492, 16649, 41421, 2362, 90027, 68690, 20059, 97763, 13926, 80540, 83426, 89172, 55736, 5211, 95368, 2567, 56429, 65782, 21530, 22862, 65123, 74067, 3135, 13929, 79802, 34022, 23058, 33069, 98167, 61393, 18456, 75011, 78042, 76229, 77373, 84421, 44919, 13784, 98537, 75198, 94324, 98315, 64370, 66413, 3526, 76091, 68980, 59956, 41873, 6862, 99170, 6996, 97281, 2305, 20925, 77084, 36327, 60336, 26505, 50846, 21729, 61313, 25857, 16124, 53895, 19582, 545, 98814, 33367, 15434, 90364, 44043, 13750, 71087, 26808, 17276, 47178, 95788, 93584, 5403, 2651, 92754, 12399, 99932, 95060, 49676, 93368, 47739, 10012, 36226, 98586, 48094, 97539}");
+TEST_CASE("a1: Test operator <<", "[task:a1]") {
+    SECTION("Empty matrix") {
+        Matrix empty;
+        stringstream ss;
+        ss << empty;
+        string actual = ss.str();
+        REQUIRE(actual == "");
+    }
+
+    SECTION("Height 3 width 1") {
+        Matrix matr(3, 1);
+        stringstream ss;
+        ss << matr;
+        string actual = util::trim(ss.str());
+        REQUIRE(actual == "0\n0\n0");
+        ss.clear();
+    }
+    SECTION("Height 1 width 3") {
+        Matrix matr1(1, 3);
+        stringstream ss;
+        ss << matr1;
+        string actual = util::trim(ss.str());
+        REQUIRE(actual == "0 0 0");
+    }
 }

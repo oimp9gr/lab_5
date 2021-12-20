@@ -51,26 +51,6 @@ TEST_CASE("a5: Different delimiter", "[task:a5]") {
     }
 }
 
-TEST_CASE("a5: Different delimiter", "[task:a5]") {
-    SECTION("Spaces") {
-        auto actual = GetFrequencies("   a    a\na\t   ");
-        map<string, int> expected = {{"AAA", 1}};
-        REQUIRE(actual == expected);
-    }
-
-    SECTION("Punctuation") {
-        auto actual = GetFrequencies("a-+.,{}}/(\'a\"a=b\"b\'b)");
-        map<string, int> expected = {{"AAA", 1}, {"AAB", 1}, {"ABB", 1}, {"BBB", 1}};
-        REQUIRE(actual == expected);
-    }
-
-    SECTION("Digits") {
-        auto actual = GetFrequencies("a1b2a34b567a89");
-        map<string, int> expected = {{"ABA", 2}, {"BAB", 1}};
-        REQUIRE(actual == expected);
-    }
-}
-
 TEST_CASE("a5: Big letters", "[task:a5]") {
     auto actual = GetFrequencies("AaAaA");
     map<string, int> expected = {{"AAA", 3}};
